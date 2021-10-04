@@ -13,9 +13,13 @@ pub fn flatten(dir: &str) -> Result<(), io::Error> {
             .to_str()
             .expect("Invalid filename found. Filenames can only have unicode characters.");
 
-        fs::rename(path, dir_path.join(filename_only))?;
-
         let parent_dir = path.parent().unwrap();
+
+        if parent_dir == dir_path {
+            continue;
+        }
+
+        fs::rename(path, dir_path.join(filename_only))?;
 
         if parent_dir.read_dir()?.count() == 0 {
             fs::remove_dir(parent_dir)?;
